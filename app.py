@@ -22,21 +22,34 @@ show_fibo = st.sidebar.checkbox("Overlay Auto-Fibonacci Zones")
 # New: Timeframe Selector (Added "1mo")
 interval = st.sidebar.selectbox("Timeframe (Interval)", ["1mo", "1wk", "1d", "1h", "15m", "5m", "1m"])
 
-# API Firewall: Protect against Yahoo's retention limits
+
+# 2. THE API FIREWALL: Protect against Yahoo's retention limits & Data Starvation
 if interval == "1m":
     max_days = 7
+    min_days = 1 # 1 day has ~375 one-minute candles (plenty for MACD)
     st.sidebar.warning("API Limit: 1m data restricted to 7 days.")
 elif interval in ["5m", "15m"]:
     max_days = 60
+    min_days = 5 # 5 days provides enough 15-minute candles
     st.sidebar.warning(f"API Limit: {interval} data restricted to 60 days.")
 elif interval == "1h":
     max_days = 730
-else:
-    # This covers both "1d" an d "1mo"
-    max_days = 3650 # 10 years limit
+    min_days = 15 # 15 days provides plenty of hourly candles
+elif interval == "1d":
+    max_days = 3650 
+    min_days = 45 # 45 days ensures ~30 daily trading candles
+elif interval == "1wk":
+    max_days = 3650
+    min_days = 250 # 250 days ensures ~35 weekly candles
+elif interval == "1mo":
+    max_days = 3650
+    min_days = 900 # 900 days ensures ~30 monthly candles
 
-# Command Center additions
-days = st.sidebar.slider("Days of History", 45, max_days, min(60, max_days))
+# 3. RENDER THE SLIDER
+# The default value is now dynamically set slightly above the minimum
+default_val = min(max_days, min_days * 2) 
+days = st.sidebar.slider("Days of History", min_days, max_days, default_val)
+
 
 # Fetch Data
 data = yf.download(ticker, period=f"{days}d", interval=interval)
