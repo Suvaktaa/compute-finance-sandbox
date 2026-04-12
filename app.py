@@ -16,6 +16,12 @@ st.title("📈 NSE Intelligence Dashboard (4K Edition)")
 st.sidebar.header("Command Center")
 ticker = st.sidebar.selectbox("Select Asset", ["^NSEI", "^NSEBANK", "RELIANCE.NS", "HDFCBANK.NS"])
 
+# Command Center additions
+days = st.sidebar.slider("Days of History", 1, max_days, min(30, max_days))
+
+# NEW: Fibonacci Toggle
+show_fibo = st.sidebar.checkbox("Overlay Auto-Fibonacci Zones")
+
 # New: Timeframe Selector (Added "1mo")
 interval = st.sidebar.selectbox("Timeframe (Interval)", ["1mo", "1wk", "1d", "1h", "15m", "5m", "1m"])
 
@@ -76,6 +82,47 @@ if not data.empty:
         fig.add_trace(go.Scatter(x=data.index, y=data['BBL_20_2.0'], line=dict(color='gray', width=1, dash='dot'), name="Lower BB"), row=1, col=1)
     except KeyError:
         pass
+
+# ROW 1: Auto-Fibonacci Overlay
+    if show_fibo:
+        # 1. Identify the Swing High and Swing Low in the current data window
+        swing_high = data['High'].max()
+        swing_low = data['Low'].min()
+        diff = swing_high - swing_low
+
+        # 2. Calculate the standard Retracement Levels
+        fibo_levels = {
+            "0% (Swing High)": swing_high,
+            "23.6%": swing_high - (diff * 0.236),
+            "38.2%": swing_high - (diff * 0.382),
+            "50.0% (Fair Value)": swing_high - (diff * 0.5),
+            "61.8% (Golden Ratio)": swing_high - (diff * 0.618),
+            "78.6%": swing_high - (diff * 0.786),
+            "100% (Swing Low)": swing_low
+        }
+
+        # 3. Draw the zones on the chart
+        for name, price in fibo_levels.items():
+            # Emphasize the 61.8% Golden Ratio with a thicker, distinct line
+            if "61.8%" in name:
+                line_color = "gold"
+                line_width = 2
+                dash_style = "dash"
+            else:
+                line_color = "gray"
+                line_width = 1
+                dash_style = "dot"
+
+            fig.add_hline(
+                y=price, 
+                line_dash=dash_style, 
+                line_color=line_color, 
+                line_width=line_width,
+                opacity=0.7,
+                annotation_text=f"{name}: {price:.2f}",
+                annotation_position="top right",
+                row=1, col=1
+            )
 
     # ROW 2: RSI
     try:
