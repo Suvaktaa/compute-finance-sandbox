@@ -17,7 +17,7 @@ st.sidebar.header("Command Center")
 ticker = st.sidebar.selectbox("Select Asset", ["^NSEI", "^NSEBANK", "RELIANCE.NS", "HDFCBANK.NS"])
 
 # New: Timeframe Selector (Added "1mo")
-interval = st.sidebar.selectbox("Timeframe (Interval)", ["1mo", "1d", "1h", "15m", "5m", "1m"])
+interval = st.sidebar.selectbox("Timeframe (Interval)", ["1mo", "1wk", "1d", "1h", "15m", "5m", "1m"])
 
 # API Firewall: Protect against Yahoo's retention limits
 if interval == "1m":
@@ -39,7 +39,7 @@ data = yf.download(ticker, period=f"{days}d", interval=interval)
 
 if not data.empty:
     # --- THE NTP FIX: Convert UTC to IST ---
-    if interval not in ["1d", "1mo"]:
+    if interval not in ["1d", "1wk", "1mo"]:
         # yfinance intraday data comes with a UTC timezone awareness
         if data.index.tz is not None:
             data.index = data.index.tz_convert('Asia/Kolkata')
@@ -101,7 +101,8 @@ if not data.empty:
     )
     
     # 4K Optimization for intraday: Hide empty gaps (weekends/nights)
-    if interval != "1d":
+    # FIX: Ensure both Daily (1d) and Monthly (1mo) bypass this filter
+    if interval not in ["1d", "1wk", "1mo"]:
         fig.update_xaxes(rangebreaks=[
             dict(bounds=["sat", "mon"]), # hide weekends
             dict(bounds=[15.5, 9.25], pattern="hour") # hide hours outside NSE trading hours (3:30 PM to 9:15 AM)
