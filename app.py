@@ -16,9 +16,6 @@ st.title("📈 NSE Intelligence Dashboard (4K Edition)")
 st.sidebar.header("Command Center")
 ticker = st.sidebar.selectbox("Select Asset", ["^NSEI", "^NSEBANK", "RELIANCE.NS", "HDFCBANK.NS"])
 
-# Command Center additions
-days = st.sidebar.slider("Days of History", 1, max_days, min(30, max_days))
-
 # NEW: Fibonacci Toggle
 show_fibo = st.sidebar.checkbox("Overlay Auto-Fibonacci Zones")
 
@@ -38,6 +35,7 @@ else:
     # This covers both "1d" an d "1mo"
     max_days = 3650 # 10 years limit
 
+# Command Center additions
 days = st.sidebar.slider("Days of History", 1, max_days, min(30, max_days))
 
 # Fetch Data
