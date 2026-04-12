@@ -16,8 +16,8 @@ st.title("📈 NSE Intelligence Dashboard (4K Edition)")
 st.sidebar.header("Command Center")
 ticker = st.sidebar.selectbox("Select Asset", ["^NSEI", "^NSEBANK", "RELIANCE.NS", "HDFCBANK.NS"])
 
-# New: Timeframe Selector
-interval = st.sidebar.selectbox("Timeframe (Interval)", ["1d", "1h", "15m", "5m", "1m"])
+# New: Timeframe Selector (Added "1mo")
+interval = st.sidebar.selectbox("Timeframe (Interval)", ["1mo", "1d", "1h", "15m", "5m", "1m"])
 
 # API Firewall: Protect against Yahoo's retention limits
 if interval == "1m":
@@ -29,7 +29,8 @@ elif interval in ["5m", "15m"]:
 elif interval == "1h":
     max_days = 730
 else:
-    max_days = 3650 # 10 years for daily
+    # This covers both "1d" an d "1mo"
+    max_days = 3650 # 10 years limit
 
 days = st.sidebar.slider("Days of History", 1, max_days, min(30, max_days))
 
@@ -38,7 +39,7 @@ data = yf.download(ticker, period=f"{days}d", interval=interval)
 
 if not data.empty:
     # --- THE NTP FIX: Convert UTC to IST ---
-    if interval != "1d":
+    if interval not in ["1d", "1mo"]:
         # yfinance intraday data comes with a UTC timezone awareness
         if data.index.tz is not None:
             data.index = data.index.tz_convert('Asia/Kolkata')
