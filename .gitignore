@@ -1,0 +1,10 @@
+# Ignore Virtual Environment
+ai_env/
+
+# Ignore Data and Logs
+*.csv
+*.log
+
+# Ignore Python Cache
+__pycache__/
+*.pyc
