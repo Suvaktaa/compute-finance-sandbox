@@ -36,7 +36,7 @@ else:
     max_days = 3650 # 10 years limit
 
 # Command Center additions
-days = st.sidebar.slider("Days of History", 1, max_days, min(30, max_days))
+days = st.sidebar.slider("Days of History", 15, max_days, min(30, max_days))
 
 # Fetch Data
 data = yf.download(ticker, period=f"{days}d", interval=interval)
