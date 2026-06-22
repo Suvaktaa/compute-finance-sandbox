@@ -1,10 +1,8 @@
-# Ignore Virtual Environment
-ai_env/
+# Ignore everything in the home directory by default
+/*
 
-# Ignore Data and Logs
-*.csv
-*.log
-
-# Ignore Python Cache
-__pycache__/
-*.pyc
+# Whitelist your specific data and compute architecture directories
+!/Finance/
+!/AMD_ROCM/
+!.gitignore
+!.bashrc
