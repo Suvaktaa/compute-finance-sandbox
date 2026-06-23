@@ -2,6 +2,8 @@
 
 A hardware-accelerated development sandbox combining high-throughput financial data pipelines with an optimized AMD ROCm GPU compute framework on Arch Linux.
 
+
+```bash
 ## 📂 Project Architecture Layout
 ├── AMD_ROCM/
 │   ├── gpu_sma.py             # System management tracker for AMD GPU compute
@@ -15,6 +17,8 @@ A hardware-accelerated development sandbox combining high-throughput financial d
 │       └── market_pull.log    # Pipeline data extraction runtime logs
 ├── .gitignore                 # Home directory tracking safety rules
 └── README.md                  # This document
+
+
 
 ## 🚀 Execution & Quick Start
 
